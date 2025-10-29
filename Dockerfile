@@ -7,3 +7,5 @@ RUN mv /app/docker-entrypoint.sh /app/plone-entrypoint.sh \
 COPY requirements.txt constraints.txt docker-entrypoint.sh /app/
 RUN bin/pip install -r requirements.txt -c plone-constraints.txt -c constraints.txt \
  && find /app -not -user plone -exec chown plone:plone {} \+
+
+RUN bin/pip install coverage

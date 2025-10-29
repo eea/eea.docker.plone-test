@@ -42,16 +42,29 @@ if [ ! -z "$DEVELOP" ]; then
 
 fi
 
+COVERAGE_DIR="/app/coverage"
+
 if [[ "$@" == "start" ]] || [ $# -eq 0 ]; then
   if [ -n "$DEVELOP" ]; then
+    mkdir -p "$COVERAGE_DIR"
+
     for dev in $DEVELOP; do
       if [ -d $dev ]; then
         dev=$(echo "$dev" | sed 's#/app/##')
-        echo "Running tests for $dev"
-	      /app/plone-entrypoint.sh bin/zope-testrunner --auto-color --auto-progress --coverage /app/coverage --test-path /app/$dev
+
+        /app/plone-entrypoint.sh bin/coverage run \
+          --source="/app/$dev" \
+          --parallel-mode \
+          -m zope.testrunner \
+          --auto-color \
+          --auto-progress \
+          --test-path "/app/$dev" \
+          --xml="/app/coverage/junit-results"
       fi
     done
   fi
+  /app/plone-entrypoint.sh bin/coverage combine || exit 1
+  /app/plone-entrypoint.sh bin/coverage xml -o "$COVERAGE_DIR/coverage.xml" || exit 1
 else
-   exec /app/plone-entrypoint.sh "$@"
+  exec /app/plone-entrypoint.sh "$@"
 fi
