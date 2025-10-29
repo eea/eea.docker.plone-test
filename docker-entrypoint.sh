@@ -58,7 +58,8 @@ if [[ "$@" == "start" ]] || [ $# -eq 0 ]; then
           -m zope.testrunner \
           --auto-color \
           --auto-progress \
-          --test-path "/app/$dev"
+          --test-path "/app/$dev" \
+          --xml="/app/coverage/junit-results"
       fi
     done
   fi
